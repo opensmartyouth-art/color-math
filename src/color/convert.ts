@@ -10,6 +10,10 @@ export function parseHex(input: string): string | null {
   return null;
 }
 
+// Fields apply 6-digit values while typing; a 3-digit shorthand waits for Enter or blur,
+// because "#318" is also just the start of "#3182f6".
+export const isFullHex = (input: string) => /^#?[0-9a-f]{6}$/i.test(input.trim());
+
 export function hexToRgb(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];

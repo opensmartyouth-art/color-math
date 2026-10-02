@@ -79,3 +79,21 @@ describe('generatePalette edge inputs', () => {
     expect(generatePalette('#ff6600').anchor).toBe('300');
   });
 });
+
+describe('hue torsion', () => {
+  it('interpolates across the 0° wrap between purple (−0.67) and red (+0.90)', () => {
+    const { torsion } = generatePalette('#e60023'); // okH 25.5°, just before red's 26.7°
+    expect(torsion).toBeGreaterThan(0.8);
+    expect(torsion).toBeLessThan(0.9);
+    const magenta = generatePalette('#ff00aa').torsion; // okH ≈ 350°, between purple and red
+    expect(magenta).toBeGreaterThan(-0.67);
+    expect(magenta).toBeLessThan(0.9);
+  });
+
+  it('turns orange toward red and blue toward purple as steps darken', () => {
+    const { light } = generatePalette('#3182f6');
+    const hue = (hex: string) => hexToOklch(hex).h;
+    expect(hue(light.orange[8])).toBeLessThan(hue(light.orange[2]));
+    expect(hue(light.blue[8])).toBeGreaterThan(hue(light.blue[2]));
+  });
+});

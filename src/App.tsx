@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { parseHex } from './color/convert';
+import { isFullHex, parseHex } from './color/convert';
 import { FAMILIES, STEPS, generatePalette, type Family, type Mode, type Scale, type Step } from './color/generate';
 import { toDesignTokens } from './color/tokens';
 import ChipEditor from './components/ChipEditor';
@@ -25,6 +25,7 @@ export default function App() {
   const [primary, setPrimary] = useState(DEFAULT_PRIMARY);
   const [mode, setMode] = useState<Mode>('light');
   const [selected, setSelected] = useState<Selection | null>(null);
+  const [returnFocus, setReturnFocus] = useState<Selection | null>(null); // chip to refocus after closing the editor
   const [overrides, setOverrides] = useState<Overrides>(noOverrides);
 
   const palette = useMemo(() => generatePalette(primary), [primary]);
@@ -34,20 +35,32 @@ export default function App() {
   );
   const inputValid = parseHex(input) !== null;
 
-  function changePrimary(value: string) {
-    setInput(value);
+  function applyPrimary(value: string) {
     const hex = parseHex(value);
     if (hex && hex !== primary) {
       setPrimary(hex);
       setOverrides(noOverrides());
       setSelected(null);
+      setReturnFocus(null);
     }
   }
 
+  function changePrimary(value: string) {
+    setInput(value);
+    if (isFullHex(value)) applyPrimary(value);
+  }
+
+  function closeEditor() {
+    setReturnFocus(selected);
+    setSelected(null);
+  }
+
+  // null, or the generated value itself, clears the edit.
   function setChip(sel: Selection, hex: string | null) {
+    const generatedHex = palette[mode][sel.family][STEPS.indexOf(sel.step)];
     setOverrides((prev) => {
       const next = { ...prev[mode] };
-      if (hex === null) delete next[`${sel.family}-${sel.step}`];
+      if (hex === null || hex === generatedHex) delete next[`${sel.family}-${sel.step}`];
       else next[`${sel.family}-${sel.step}`] = hex;
       return { ...prev, [mode]: next };
     });
@@ -85,6 +98,8 @@ export default function App() {
               id="primary"
               value={input}
               onChange={(e) => changePrimary(e.target.value)}
+              onBlur={(e) => applyPrimary(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && applyPrimary(e.currentTarget.value)}
               spellCheck={false}
               autoComplete="off"
               aria-invalid={!inputValid}
@@ -113,7 +128,7 @@ export default function App() {
       <main className="panel panel-right" data-mode={mode}>
         <header className="right-header">
           {selected ? (
-            <button type="button" className="back" onClick={() => setSelected(null)}>
+            <button type="button" className="back" onClick={closeEditor}>
               ← 컬러칩
             </button>
           ) : (
@@ -130,9 +145,14 @@ export default function App() {
 
         <div className="right-body">
           {selected && current ? (
-            <ChipEditor selection={selected} hex={current} onChange={(hex) => setChip(selected, hex)} />
+            <ChipEditor
+              selection={selected}
+              hex={current}
+              onChange={(hex) => setChip(selected, hex)}
+              onClose={closeEditor}
+            />
           ) : (
-            <ChipGrid scale={shown[mode]} edited={overrides[mode]} onSelect={setSelected} />
+            <ChipGrid scale={shown[mode]} edited={overrides[mode]} focus={returnFocus} onSelect={setSelected} />
           )}
         </div>
 

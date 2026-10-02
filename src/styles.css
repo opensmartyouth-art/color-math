@@ -425,7 +425,6 @@ p {
 .chip-hex {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  opacity: 0.8;
 }
 
 .chip-dot {

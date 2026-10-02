@@ -41,7 +41,8 @@ export default function ColorInfo({ selection, mode, hex, generated, onRevert }:
         <dt>HSL</dt>
         <dd>{`${hsl.h.toFixed(1)}°, ${hsl.s.toFixed(1)}%, ${hsl.l.toFixed(1)}%`}</dd>
         <dt>OKLCH</dt>
-        <dd>{`${ok.l.toFixed(2)}  ${ok.c.toFixed(4)}  ${ok.h.toFixed(1)}°`}</dd>
+        {/* Hue is undefined for achromatic colors; atan2 would print noise. */}
+        <dd>{`${ok.l.toFixed(2)}  ${ok.c.toFixed(4)}  ${ok.c < 1e-4 ? '—' : `${ok.h.toFixed(1)}°`}`}</dd>
         <dt>흰 배경</dt>
         <dd>
           <ContrastValue ratio={contrast(hex, '#ffffff')} />

@@ -108,6 +108,76 @@ describe('chip editing', () => {
     fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
     expect(chip('gray-100').getAttribute('aria-label')).toBe('gray-100 #e8ecf2 수정됨');
   });
+
+  it('does not apply a 3-digit prefix while typing in the HEX field, only on Enter or blur', () => {
+    render(<App />);
+    fireEvent.click(chip('gray-100'));
+    const field = screen.getByLabelText('HEX 값');
+    fireEvent.change(field, { target: { value: '#dcd' } });
+    expect(screen.queryByText(/^생성값 /)).toBeNull();
+    fireEvent.keyDown(field, { key: 'Enter' });
+    expect(screen.getByText(`생성값 ${initial.light.gray[1]}`)).toBeTruthy();
+    expect(field).toHaveProperty('value', '#dcd');
+  });
+
+  it('drops the edit mark when a chip is set back to its generated value', () => {
+    render(<App />);
+    fireEvent.click(chip('gray-100'));
+    const field = screen.getByLabelText('HEX 값');
+    fireEvent.change(field, { target: { value: '#123456' } });
+    fireEvent.change(field, { target: { value: initial.light.gray[1].toUpperCase() } });
+    expect(screen.queryByText(/^생성값 /)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    expect(chip('gray-100').getAttribute('aria-label')).toBe(`gray-100 ${initial.light.gray[1]}`);
+  });
+
+  it('shows no hue for achromatic colors', () => {
+    render(<App />);
+    fireEvent.click(chip('gray-50')); // #fafafa, chroma ≈ 0
+    const info = screen.getByRole('region', { name: '색 정보' });
+    expect(within(info).getByText('OKLCH').nextElementSibling?.textContent).toMatch(/—$/);
+  });
+});
+
+describe('primary input', () => {
+  it('keeps edits while backspacing through a 3-digit prefix of the same color', () => {
+    render(<App />);
+    fireEvent.click(chip('gray-100'));
+    fireEvent.change(screen.getByLabelText('HEX 값'), { target: { value: '#123456' } });
+    for (const value of ['#3182f', '#318', '#31', '#318', '#3182f', '#3182f6']) {
+      fireEvent.change(primaryInput(), { target: { value } });
+    }
+    expect(screen.getByRole('region', { name: '색 정보' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    expect(chip('gray-100').getAttribute('aria-label')).toBe('gray-100 #123456 수정됨');
+  });
+
+  it('applies a 3-digit shorthand on Enter', () => {
+    render(<App />);
+    fireEvent.change(primaryInput(), { target: { value: '#38f' } });
+    expect(chip('primary-500').getAttribute('aria-label')).toContain('#3182f6');
+    fireEvent.keyDown(primaryInput(), { key: 'Enter' });
+    expect(screen.getAllByRole('button', { name: /#3388ff/ }).length).toBeGreaterThan(0);
+  });
+});
+
+describe('keyboard focus', () => {
+  it('moves focus into the editor and back to the chip it came from', () => {
+    render(<App />);
+    chip('gray-100').focus();
+    fireEvent.click(chip('gray-100'));
+    expect(document.activeElement).toBe(screen.getByLabelText('HEX 값'));
+    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    expect(document.activeElement).toBe(chip('gray-100'));
+  });
+
+  it('closes the editor with Escape', () => {
+    render(<App />);
+    fireEvent.click(chip('red-500'));
+    fireEvent.keyDown(screen.getByLabelText('HEX 값'), { key: 'Escape' });
+    expect(screen.getByRole('region', { name: '컬러칩 목록' })).toBeTruthy();
+    expect(document.activeElement).toBe(chip('red-500'));
+  });
 });
 
 describe('JSON download', () => {
