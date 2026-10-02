@@ -8,7 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist -u \"opensmartyouth-art <313367727+opensmartyouth-art@users.noreply.github.com>\" -m \"deploy\""
   },
   "dependencies": {
     "react": "^19.3.0",
