@@ -145,3 +145,10 @@ Primary 컬러 하나를 넣으면, 14개 디자인 시스템 실측에서 뽑�
 
 - Vite `base: '/color-math/'`, `npm run deploy`로 빌드 결과를 `gh-pages` 브랜치에 올리고 GitHub Pages가 그 브랜치를 서빙한다.
 - GitHub Actions를 쓰지 않는 이유: 지금 쓰는 토큰에 workflow 권한이 없다.
+
+## 9. 시각 디자인 (2026-10-02 추가)
+
+- 오너 지정: opencode.ai 스타일([getdesign.md](https://getdesign.md/opencode.ai/design-md)). 원문과 이 저장소의 적용 차이는 `DESIGN.md`.
+- 한글 글꼴: JetBrains Mono + Pretendard(한글만) — 오너 선택.
+- 서비스 이름은 블록 픽셀 워드마크 "COLOR MATH"로 표시(화면 읽기 프로그램에는 "Color Math") — 오너 선택.
+- 뒤로 가기는 화면에 `[←] 컬러칩`, 화면 읽기 이름은 "컬러칩으로 돌아가기".

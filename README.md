@@ -4,6 +4,8 @@ Primary 컬러 하나를 넣으면 Neutral, 시맨틱 컬러(red · orange · ye
 
 **https://opensmartyouth-art.github.io/color-math/**
 
+화면은 opencode.ai 스타일을 분석한 [DESIGN.md](DESIGN.md)(출처 [awesome-design-md](https://github.com/VoltAgent/awesome-design-md), MIT)를 따릅니다.
+
 ## 왜 만들었나
 
 디자인 시스템의 Color를 처음 세울 때 "왜 이 회색인가, 왜 50부터인가"에 답하기 어렵습니다.

@@ -10,6 +10,14 @@ const primaryInput = () => screen.getByLabelText('Primary 컬러');
 afterEach(cleanup);
 
 describe('palette view', () => {
+  it('names the page "Color Math" while showing the block-pixel wordmark only visually', () => {
+    render(<App />);
+    const title = screen.getByRole('heading', { level: 1, name: 'Color Math' });
+    const wordmark = title.querySelector('svg');
+    expect(wordmark?.getAttribute('aria-hidden')).toBe('true');
+    expect(wordmark?.querySelectorAll('rect').length).toBeGreaterThan(50);
+  });
+
   it('starts from #3182f6 and renders 8 families × 10 chips', () => {
     render(<App />);
     expect(primaryInput()).toHaveProperty('value', '#3182f6');
@@ -54,7 +62,7 @@ describe('chip editing', () => {
     expect(screen.getByLabelText('HEX 값')).toHaveProperty('value', initial.light.gray[1]);
     expect(screen.queryByRole('region', { name: '컬러칩 목록' })).toBeNull();
 
-    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    fireEvent.click(screen.getByRole('button', { name: '컬러칩으로 돌아가기' }));
     expect(screen.getByRole('region', { name: '컬러칩 목록' })).toBeTruthy();
     expect(screen.queryByRole('region', { name: '색 정보' })).toBeNull();
   });
@@ -65,13 +73,13 @@ describe('chip editing', () => {
     fireEvent.change(screen.getByLabelText('HEX 값'), { target: { value: '#123456' } });
     expect(screen.getByText(`생성값 ${initial.light.gray[1]}`)).toBeTruthy();
 
-    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    fireEvent.click(screen.getByRole('button', { name: '컬러칩으로 돌아가기' }));
     expect(chip('gray-100').getAttribute('aria-label')).toBe('gray-100 #123456 수정됨');
     expect(chip('gray-200').getAttribute('aria-label')).toBe(`gray-200 ${initial.light.gray[2]}`);
 
     fireEvent.click(chip('gray-100'));
     fireEvent.click(screen.getByRole('button', { name: '생성값으로 되돌리기' }));
-    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    fireEvent.click(screen.getByRole('button', { name: '컬러칩으로 돌아가기' }));
     expect(chip('gray-100').getAttribute('aria-label')).toBe(`gray-100 ${initial.light.gray[1]}`);
   });
 
@@ -81,7 +89,7 @@ describe('chip editing', () => {
     fireEvent.click(screen.getByRole('button', { name: '다크' }));
     expect(screen.getByLabelText('HEX 값')).toHaveProperty('value', initial.dark.gray[1]);
     fireEvent.change(screen.getByLabelText('HEX 값'), { target: { value: '#abcdef' } });
-    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    fireEvent.click(screen.getByRole('button', { name: '컬러칩으로 돌아가기' }));
     expect(chip('gray-100').getAttribute('aria-label')).toBe('gray-100 #abcdef 수정됨');
 
     fireEvent.click(screen.getByRole('button', { name: '라이트' }));
@@ -105,7 +113,7 @@ describe('chip editing', () => {
       fireEvent.change(field, { target: { value } });
       expect(field).toHaveProperty('value', value);
     }
-    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    fireEvent.click(screen.getByRole('button', { name: '컬러칩으로 돌아가기' }));
     expect(chip('gray-100').getAttribute('aria-label')).toBe('gray-100 #e8ecf2 수정됨');
   });
 
@@ -127,7 +135,7 @@ describe('chip editing', () => {
     fireEvent.change(field, { target: { value: '#123456' } });
     fireEvent.change(field, { target: { value: initial.light.gray[1].toUpperCase() } });
     expect(screen.queryByText(/^생성값 /)).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    fireEvent.click(screen.getByRole('button', { name: '컬러칩으로 돌아가기' }));
     expect(chip('gray-100').getAttribute('aria-label')).toBe(`gray-100 ${initial.light.gray[1]}`);
   });
 
@@ -148,7 +156,7 @@ describe('primary input', () => {
       fireEvent.change(primaryInput(), { target: { value } });
     }
     expect(screen.getByRole('region', { name: '색 정보' })).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    fireEvent.click(screen.getByRole('button', { name: '컬러칩으로 돌아가기' }));
     expect(chip('gray-100').getAttribute('aria-label')).toBe('gray-100 #123456 수정됨');
   });
 
@@ -167,7 +175,7 @@ describe('keyboard focus', () => {
     chip('gray-100').focus();
     fireEvent.click(chip('gray-100'));
     expect(document.activeElement).toBe(screen.getByLabelText('HEX 값'));
-    fireEvent.click(screen.getByRole('button', { name: '← 컬러칩' }));
+    fireEvent.click(screen.getByRole('button', { name: '컬러칩으로 돌아가기' }));
     expect(document.activeElement).toBe(chip('gray-100'));
   });
 

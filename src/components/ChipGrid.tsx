@@ -37,7 +37,11 @@ export default function ChipGrid({ scale, edited, focus, onSelect }: Props) {
                   aria-label={`${family}-${step} ${hex}${isEdited ? ' 수정됨' : ''}`}
                   onClick={() => onSelect({ family, step })}
                 >
-                  {isEdited && <span className="chip-dot" />}
+                  {isEdited && (
+                    <span className="chip-mark" aria-hidden="true">
+                      [*]
+                    </span>
+                  )}
                   <span className="chip-step">{step}</span>
                   <span className="chip-hex">{hex}</span>
                 </button>

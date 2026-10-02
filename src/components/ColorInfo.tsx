@@ -16,7 +16,7 @@ function ContrastValue({ ratio }: { ratio: number }) {
   const grade = wcagGrade(ratio);
   return (
     <>
-      {ratio.toFixed(2)}:1 <span className={`grade grade-${grade}`}>{GRADE_LABEL[grade]}</span>
+      {ratio.toFixed(2)}:1 <span className={`grade grade-${grade}`}>[{GRADE_LABEL[grade]}]</span>
     </>
   );
 }
@@ -30,7 +30,7 @@ export default function ColorInfo({ selection, mode, hex, generated, onRevert }:
     <section className="color-info" aria-label="색 정보">
       <div className="info-title">
         <h2>{`${selection.family}-${selection.step}`}</h2>
-        <span className="mode-tag">{mode === 'light' ? '라이트' : '다크'}</span>
+        <span className="mode-tag">[{mode === 'light' ? '라이트' : '다크'}]</span>
       </div>
       <div className="info-swatch" style={{ background: hex }} />
       <dl className="info-list">

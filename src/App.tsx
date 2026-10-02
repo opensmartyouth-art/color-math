@@ -5,6 +5,7 @@ import { toDesignTokens } from './color/tokens';
 import ChipEditor from './components/ChipEditor';
 import ChipGrid from './components/ChipGrid';
 import ColorInfo from './components/ColorInfo';
+import Wordmark from './components/Wordmark';
 
 const DEFAULT_PRIMARY = '#3182f6';
 
@@ -86,7 +87,10 @@ export default function App() {
     <div className="app">
       <aside className="panel panel-left">
         <header className="brand">
-          <h1>Color Math</h1>
+          <h1>
+            <span className="sr-only">Color Math</span>
+            <Wordmark />
+          </h1>
           <p>Primary 하나로 컬러 시스템 만들기</p>
         </header>
 
@@ -128,13 +132,13 @@ export default function App() {
       <main className="panel panel-right" data-mode={mode}>
         <header className="right-header">
           {selected ? (
-            <button type="button" className="back" onClick={closeEditor}>
-              ← 컬러칩
+            <button type="button" className="back" aria-label="컬러칩으로 돌아가기" onClick={closeEditor}>
+              <span aria-hidden="true">[←]</span> 컬러칩
             </button>
           ) : (
             <h2>컬러칩</h2>
           )}
-          <div className="segmented" role="group" aria-label="모드">
+          <div className="mode-tabs" role="group" aria-label="모드">
             {(['light', 'dark'] as const).map((m) => (
               <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}>
                 {m === 'light' ? '라이트' : '다크'}
